@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>쿠팡! - 오늘의 특가</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cp-red: #E31A22;
+      --cp-blue: #0073E9;
+      --cp-bg: #F0F2F5;
+      --cp-dark: #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+      background-color: var(--cp-bg);
+      color: var(--cp-dark);
+      overflow-x: hidden;
+    }
+
+    /* Coupang App Top Bar */
+    .coupang-top-header {
+      background: #FFFFFF;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #EAEAEA;
+    }
+
+    .top-search-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      gap: 10px;
+    }
+
+    .cp-logo-text {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--cp-red);
+      letter-spacing: -1px;
+      text-decoration: none;
+    }
+
+    .cp-search-bar {
+      flex: 1;
+      position: relative;
+    }
+
+    .cp-search-bar input {
+      width: 100%;
+      height: 36px;
+      border: 2px solid var(--cp-red);
+      border-radius: 4px;
+      padding: 0 34px 0 10px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .cp-search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+    }
+
+    .cp-nav-tabs {
+      display: flex;
+      background: #FFFFFF;
+      overflow-x: auto;
+      white-space: nowrap;
+      border-bottom: 1px solid #E5E5E5;
+      padding: 0 8px;
+    }
+
+    .cp-tab-item {
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #555;
+    }
+
+    .cp-tab-item.active {
+      color: var(--cp-red);
+      border-bottom: 2px solid var(--cp-red);
+    }
+
+    /* =========================================
+       COUPANG STYLE AD BANNER (TEST A ONLY)
+       Làm nổi bật Tiêu đề Test A "Được" (Đã xóa giá)
+       ========================================= */
+    .banner-container-section {
+      padding: 10px 12px;
+    }
+
+    .cp-ad-banner {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      background: #11141C;
+      transition: transform 0.15s ease;
+    }
+
+    .cp-ad-banner:active {
+      transform: scale(0.99);
+    }
+
+    /* Background Shoe Image with Gradient Overlay */
+    .banner-bg-img {
+      position: absolute;
+      right: -15px;
+      bottom: -10px;
+      width: 260px;
+      height: 260px;
+      object-fit: cover;
+      transform: rotate(-10deg);
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.65));
+      z-index: 1;
+    }
+
+    /* Gradient Shadow Layer */
+    .banner-gradient-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(14, 18, 28, 0.96) 0%, rgba(14, 18, 28, 0.8) 55%, rgba(14, 18, 28, 0.25) 100%);
+      z-index: 2;
+    }
+
+    /* Overlay Typography Container */
+    .banner-text-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 3;
+    }
+
+    .top-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-red {
+      background: var(--cp-red);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: -0.2px;
+    }
+
+    .badge-sub {
+      background: rgba(255, 255, 255, 0.15);
+      color: #E0E4EC;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+
+    .main-copy-box {
+      margin-top: 14px;
+    }
+
+    .copy-sub-heading {
+      font-size: 13px;
+      font-weight: 800;
+      color: #8AB4F8;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Main Big Title (Test A Gain Frame - Rất nổi bật) */
+    .copy-main-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.32;
+      letter-spacing: -0.8px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      word-break: keep-all;
+    }
+
+    .copy-main-title span {
+      color: #FFD13B;
+    }
+
+    .copy-benefit-desc {
+      font-size: 13px;
+      color: #D6DCE8;
+      line-height: 1.5;
+      margin-top: 10px;
+      max-width: 80%;
+      word-break: keep-all;
+    }
+
+    /* Benefit Highlights Footer (ĐÃ BỎ GIÁ TIỀN) */
+    .bottom-benefit-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 12px 14px;
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .benefit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .benefit-item {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .benefit-item span {
+      color: #FFD13B;
+    }
+
+    .ad-rocket-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: #53A7FF;
+      margin-top: 2px;
+    }
+
+    .cta-btn-pill {
+      background: #FFFFFF;
+      color: #111111;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* =========================================
+       VIEW 2: PRODUCT DETAIL VIEW (ON CLICK)
+       ========================================= */
+    #detail-page-view {
+      display: none;
+      min-height: 100vh;
+      background: #FFFFFF;
+      padding-bottom: 70px;
+    }
+
+    .detail-nav-bar {
+      position: sticky;
+      top: 0;
+      background: #FFF;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid #EEE;
+      z-index: 100;
+    }
+
+    .detail-hero-box {
+      width: 100%;
+      height: 320px;
+      background: #FAFAFA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .detail-hero-box img {
+      max-width: 90%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .detail-body {
+      padding: 16px;
+    }
+
+    .detail-brand-name {
+      color: var(--cp-blue);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .detail-product-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .detail-pricing-box {
+      border-top: 1px solid #F0F0F0;
+      border-bottom: 1px solid #F0F0F0;
+      padding: 12px 0;
+      margin-bottom: 16px;
+    }
+
+    .detail-bottom-actions {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid #EAEAEA;
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .btn-cp-cart {
+      flex: 1;
+      height: 46px;
+      border: 1px solid #CCC;
+      background: #FFF;
+      font-weight: 700;
+      border-radius: 4px;
+    }
+
+    .btn-cp-buy {
+      flex: 2;
+      height: 46px;
+      border: none;
+      background: var(--cp-blue);
+      color: #FFF;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================
+       VIEW 1: COUPANG HOME (TEST A BANNER - ĐÃ XÓA GIÁ)
+       ========================================= -->
+  <div id="home-page-view">
+    <!-- Top Header -->
+    <header class="coupang-top-header">
+      <div class="top-search-row">
+        <span class="cp-logo-text">coupang</span>
+        <div class="cp-search-bar">
+          <input type="text" value="신발mlb" readonly>
+          <span class="cp-search-icon">🔍</span>
+        </div>
+        <span style="font-size: 20px;">🛒</span>
+      </div>
+      <div class="cp-nav-tabs">
+        <div class="cp-tab-item active">골드박스</div>
+        <div class="cp-tab-item">로켓배송</div>
+        <div class="cp-tab-item">로켓프레시</div>
+        <div class="cp-tab-item">기획전</div>
+      </div>
+    </header>
+
+    <!-- Ad Banner with Text Overlay (Test A) -->
+    <section class="banner-container-section">
+      <div class="cp-ad-banner" id="ab-test-banner">
+        
+        <!-- Shoe Graphic -->
+        <img class="banner-bg-img" 
+             src="https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/ff5df797-9e4a-579a-a221-389530faa4a5/3e8cf789-6124-5215-bbd5-ca04762847e5.jpg" 
+             alt="MLB BIG A">
+
+        <div class="banner-gradient-layer"></div>
+
+        <!-- Text Overlay on Banner (Test A) -->
+        <div class="banner-text-overlay">
+          <div>
+            <div class="top-badge-row">
+              <span class="badge-red">단독 혜택</span>
+              <span class="badge-sub">사은품 1:1 증정</span>
+            </div>
+
+            <div class="main-copy-box">
+              <div class="copy-sub-heading">MLB KOREA · BIG A</div>
+              <h1 class="copy-main-title">
+                신는 순간 완성되는<br>
+                <span>6cm 키높이</span> & 완벽한 비율
+              </h1>
+              <p class="copy-benefit-desc">
+                다리가 길어 보이는 쿠셔닝 솔과 스트릿 핏으로 어떤 코디든 완벽하게 연출하세요.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bottom Highlights (No Price) -->
+          <div class="bottom-benefit-box">
+            <div class="benefit-list">
+              <div class="benefit-item">✨ <span>자연스러운 6cm 키높이</span> 비율 연출</div>
+              <div class="benefit-item">🎁 <span>벨뉴슈즈렉(신발정리대)</span> 100% 무료 증정</div>
+              <div class="ad-rocket-tag">🚀 로켓배송 | 내일 새벽 7시 전 도착 보장</div>
+            </div>
+            <button class="cta-btn-pill">혜택 확인 〉</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+
+  <!-- =========================================
+       VIEW 2: PRODUCT DETAIL PAGE (ON CLICK)
+       ========================================= -->
+  <div id="detail-page-view">
+    <div class="detail-nav-bar">
+      <button onclick="backToHome()" style="background:none; border:none; font-size:18px; cursor:pointer; font-weight:bold;">←</button>
+      <span style="font-weight: 800; font-size: 15px;">상품상세</span>
+      <span style="font-size: 18px;">🛒</span>
+    </div>
+
+    <div class="detail-hero-box">
+      <img src="https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/ff5df797-9e4a-579a-a221-389530faa4a5/3e8cf789-6124-5215-bbd5-ca04762847e5.jpg" alt="MLB BIG A 키높이 운동화">
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-brand-name">MLB KOREA OFFICIAL</div>
+      <h1 class="detail-product-title">MLB 운동화 남녀공용 BIG A 키높이 신발 + 벨뉴슈즈렉 증정</h1>
+
+      <div class="detail-pricing-box">
+        <div style="font-size: 13px; color: #888; text-decoration: line-through;">정상가 149,000원</div>
+        <div style="display:flex; align-items:baseline; gap:8px;">
+          <span style="color:var(--cp-red); font-size:24px; font-weight:900;">34%</span>
+          <span style="font-size:24px; font-weight:900; color:#111;">98,000원</span>
+        </div>
+        <div style="color:var(--cp-blue); font-size:13px; font-weight:800; margin-top:4px;">
+          🚀 로켓배송 | 내일(수) 새벽 7시 전 도착 보장
+        </div>
+      </div>
+
+      <div style="font-size: 13px; color: #444; line-height: 1.6;">
+        • <b>기본 구성</b>: MLB BIG A 정품 키높이 운동화 (6cm 솔)<br>
+        • <b>단독 사은품</b>: 프리미엄 벨뉴슈즈렉 (신발 정리대) 100% 동봉 출고<br>
+        • <b>배송 혜택</b>: 로켓배송 / 30일 이내 무료 반품 보장
+      </div>
+    </div>
+
+    <div class="detail-bottom-actions">
+      <button class="btn-cp-cart">장바구니</button>
+      <button class="btn-cp-buy" onclick="alert('주문이 완료되었습니다. (Test A Click Conversion Recorded)')">
+        바로구매 (로켓배송)
+      </button>
+    </div>
+  </div>
+
+
+  <!-- =========================================
+       INTERACTION JAVASCRIPT
+       ========================================= -->
+  <script>
+    var banner = document.getElementById('ab-test-banner');
+    var homeView = document.getElementById('home-page-view');
+    var detailView = document.getElementById('detail-page-view');
+
+    // Chuyển sang trang chi tiết khi bấm vào banner
+    banner.addEventListener('click', function() {
+      console.log('[A/B Test] User clicked on Test A Banner!');
+      homeView.style.display = 'none';
+      detailView.style.display = 'block';
+      window.scrollTo(0, 0);
+    });
+
+    function backToHome() {
+      detailView.style.display = 'none';
+      homeView.style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+  </script>
+</body>
+</html>
